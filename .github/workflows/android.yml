@@ -13,7 +13,6 @@ on:
 permissions:
   id-token: write
   contents: write
-  pull-requests: write
   security-events: write
 
 jobs:
@@ -43,10 +42,14 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Create status
-      uses: Sibz/github-status-action@v1
-      with: 
-        authToken: ${{secrets.GITHUB_TOKEN}}
-        context: 'Android Build'
-        description: 'Passed'
-        state: 'success'
-        sha: ${{github.event.pull_request.head.sha || github.sha}}
+      uses: geekodour/gh-actions-custom-status@v0.0.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        LAST_COMMIT_SHA: ${{ github.event.client_payload.LAST_COMMIT_SHA }}
+      with:
+        args:
+          >-
+          --state=success
+          --context=build
+          --description="Android Build"
+          --target_url=https://github.com/${{ github.repository }}/actions
