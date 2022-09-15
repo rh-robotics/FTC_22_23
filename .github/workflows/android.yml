@@ -42,14 +42,10 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Create status
-      uses: geekodour/gh-actions-custom-status@v0.0.4
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        LAST_COMMIT_SHA: ${{ github.event.client_payload.LAST_COMMIT_SHA }}
+      uses: Sibz/github-status-action@v1
       with:
-        args:
-          >-
-          --state=success
-          --context=build
-          --description="Android Build"
-          --target_url=https://github.com/${{ github.repository }}/actions
+        authToken: ${{secrets.GITHUB_TOKEN}}
+        context: 'Android Build'
+        description: 'Passed'
+        state: 'success'
+        sha: ${{github.event.pull_request.head.sha || github.sha}}
