@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -51,8 +52,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Left  drive motor:        "flDrive"
  * Motor channel:  Right drive motor:        "frDrive"
  * Motor channel:  Manipulator drive motor:  "left_arm"
- * Servo channel:  Servo to open left claw:  "left_hand"
- * Servo channel:  Servo to open right claw: "right_hand"
+ * Servo channel:  Servo to open left claw:  "leftClaw"
+ * Servo channel:  Servo to open right claw: "rightClaw"
+ * Servo channel: Servo to operate arm thingy: "armServo"
  */
 public class HardwarePushbot
 {
@@ -61,21 +63,16 @@ public class HardwarePushbot
     public DcMotorEx brDrive = null;
     public DcMotorEx flDrive = null;
     public DcMotorEx frDrive = null;
-
-    public DcMotor r_drive = null;
-    public DcMotor l_drive = null;
-
-    public Servo servoClaw = null;
-    public Servo servoClaw2 = null;
-
+    public DcMotorEx flipMotor = null;
+    public Servo clawServo = null;
     public DistanceSensor dSensor = null;
-
+    public Servo armServo = null;
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     //private ElapsedTime period  = new ElapsedTime();
     public static final double MAX_SPEED= 1;
-    public static final double servoClawOut = 1;
-    public static final double servoClawIn = 1;
+    //public static final double servoClawOut = 0;
+    //public static final double servoClawIn = 1;
 
 
     /* Constructor */
@@ -93,14 +90,17 @@ public class HardwarePushbot
         brDrive  = hwMap.get(DcMotorEx.class, "brDrive");
         flDrive  = hwMap.get(DcMotorEx.class, "flDrive");
         frDrive  = hwMap.get(DcMotorEx.class, "frDrive");
-
-
+        flipMotor = hwMap.get(DcMotorEx.class, "armMotor");
+        clawServo = hwMap.get(Servo.class, "clawServo");
+        armServo = hwMap.get(Servo.class, "armServo");
+        flipMotor = hwMap.get(DcMotorEx.class, "flipMotor");
         //dSensor = hwMap.get(DistanceSensor.class, "distanceSensor");
 
         blDrive.setDirection(DcMotorEx.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         brDrive.setDirection(DcMotorEx.Direction.FORWARD);
         flDrive.setDirection(DcMotorEx.Direction.FORWARD);
         frDrive.setDirection(DcMotorEx.Direction.FORWARD);
+        flipMotor.setDirection(DcMotorEx.Direction.FORWARD);
 
 
         // Set motors (and CRServos eventually) to zero power
@@ -108,9 +108,12 @@ public class HardwarePushbot
         brDrive.setPower(0);
         flDrive.setPower(0);
         frDrive.setPower(0);
+        flipMotor.setPower(0);
 
 
         //Set servos to correct locations when servos applicable (arm and gorail stuff)
+        clawServo.setPosition(0);
+
 
 
         // Set all motors to run without encoders.
@@ -119,6 +122,7 @@ public class HardwarePushbot
         brDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         flDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frDrive.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        flipMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 }
